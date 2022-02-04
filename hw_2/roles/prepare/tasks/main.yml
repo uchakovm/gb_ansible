@@ -1,0 +1,25 @@
+---
+- name: Create user and group
+  block:
+    - name: Create group
+      group:
+        name: "{{ user.group }}"
+
+    - name: Create user
+      user:
+        name: "{{ user.name }}"
+        password: "{{ user.password | password_hash('sha512') }}"
+        shell: /bin/bash
+        group: "{{ user.group }}"
+  rescue:
+    - name: Rollback
+      command: date
+
+- name: Install package
+  apt:
+    pkg:
+      - iftop
+      - htop
+      - vim
+      - tcpdump
+    state: latest
