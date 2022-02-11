@@ -1,0 +1,5 @@
+---
+- name: Download file from a file path
+  get_url:
+    url: https://i0.wp.com/mcsjournal.ru/wp-content/uploads/2021/02/Razrabotka.png?w=1200&ssl=1
+    dest: "/home/{{ user.name }}/devops.jpg"

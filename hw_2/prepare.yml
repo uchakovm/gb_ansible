@@ -1,0 +1,15 @@
+---
+- name: Prepare user
+  hosts: server
+  become: true
+  roles:
+    - { role: prepare, tags: [prepare] }
+    - { role: download, tags: [download] }
+    - { role: nginx, tags: [nginx] }
+
+
+#- name: Download file
+#  hosts: server
+#  become: true
+#  roles:
+#    - { role: download, tags: [download] }
