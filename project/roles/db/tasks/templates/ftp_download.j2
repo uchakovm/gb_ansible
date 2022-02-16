@@ -1,0 +1,13 @@
+import ftplib
+import os
+import sys
+
+if __name__ == '__main__':
+    ftp = ftplib.FTP(host="{{ db.ftp.host }}", user="{{ db.ftp.login }}", passwd="{{ db.ftp.password }}")
+    ftp.cwd(f"/backup/{sys.argv[1]}")
+    file_name = sorted(ftp.nlst(), key=lambda x: ftp.voidcmd(f"MDTM {x}"))[-1]
+    local_filename = os.path.join(f"{sys.argv[2]}", file_name)
+    lf = open(local_filename, "wb")
+    ftp.retrbinary("RETR " + file_name, lf.write, 8 * 1024)
+    lf.close()
+    print(local_filename)

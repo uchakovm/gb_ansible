@@ -1,0 +1,7 @@
+---
+app:
+  host: "staging.training-rzd.ru"
+  compose_file: "docker-compose.production.yml"
+
+#TODO заглушка
+template_path: local
