@@ -1,0 +1,31 @@
+---
+
+- name: Git install
+  tags:
+    - create
+  apt:
+    pkg:
+      - git
+
+- name: Create directory project
+  tags:
+    - create
+  file:
+    path: "{{ directory.root }}"
+    state: directory
+    mode: 777
+    recurse: yes
+
+- name: Clone git project
+  tags:
+    - create
+    - update
+  git:
+    repo: "http://{{ user.login }}:{{ user.password }}@{{ git.host }}/git/aos-docker.git"
+    dest: "{{ directory.project }}"
+    clone: yes
+    update: yes
+    force: yes
+
+- name: Change permission to directory project
+  command: "chmod -R 777 {{ directory.root }}"

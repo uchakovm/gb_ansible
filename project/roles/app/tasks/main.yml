@@ -1,0 +1,114 @@
+---
+
+- name: Docker.io install
+  tags:
+    - create
+  apt:
+    pkg:
+      - docker.io
+
+- name: Pip install
+  tags:
+    - create
+  apt:
+    pkg:
+      - python3-pip
+
+- name: Docker & docker-compose install
+  tags:
+    - create
+  pip:
+    name:
+      - docker
+      - docker-compose
+
+- name: Create a permission for docker-registry
+  tags:
+    - create
+  copy:
+    dest: "/etc/docker/daemon.json"
+    content: |
+      {"insecure-registries" : ["{{ docker.registry }}"]}
+
+- name: Restart docker
+  tags:
+    - create
+  service:
+    name: docker
+    state: restarted
+
+- name: Docker login
+  tags:
+    - create
+  docker_login:
+    registry_url: "{{ docker.registry }}"
+    username: "{{ docker.login }}"
+    password: "{{ docker.password }}"
+    reauthorize: yes
+
+- name: Create services
+  tags:
+    - create
+  docker_compose:
+    files: "{{ app.compose_file }}"
+    project_src: "{{ directory.project }}"
+    pull: yes
+    stopped: yes
+
+- name: Change permission to directory project
+  tags:
+    - create
+  command: "chmod -R 777 {{ directory.root }}"
+
+- name: Start services
+  tags:
+    - create
+    - update
+  docker_compose:
+    files: "{{ app.compose_file }}"
+    project_src: "{{ directory.project }}"
+    pull: yes
+    build: yes
+    remove_orphans: yes
+
+- name: Force auth keys
+  tags:
+    - create
+    - update #TODO
+  command: "docker exec -it {{ docker.aos_auth }} php artisan passport:keys --force"
+
+- name: Change auth env
+  tags:
+    - create
+    - update
+  template:
+    src: "{{ template_path }}/env.auth.j2"
+    dest: "{{ directory.project }}/app-data/aos-authorization/.env.production"
+
+- name: Change app env
+  tags:
+    - create
+    - update
+  template:
+    src: "{{ template_path }}/env.app.j2"
+    dest: "{{ directory.project }}/app-data/aos-application/env.production.json"
+
+- name: Restart services
+  tags:
+    - create
+    - update
+  docker_compose:
+    files: "{{ app.compose_file }}"
+    project_src: "{{ directory.project }}"
+    restarted: yes
+
+- name: Auth db seed
+  tags:
+    - create
+  command: docker exec -it {{ docker.aos_auth }} php artisan db:seed --force
+
+- name: Auth db injection
+  tags:
+    - create
+    - update
+  command: docker exec {{ docker.auth_db }} psql -U {{ db.user.auth }} -p 5432 -d {{ db.auth }} -c "update oauth_clients set redirect='http://{{ app.host }}:9999/oauth' where id='93140325-4534-419a-937c-558b17045d7e';"

@@ -1,0 +1,34 @@
+---
+- name: Download ftp {{ db.ftp.auth }} db
+  tags:
+    - create
+    - update
+  command: "python3 {{ directory.scripts }}/ftp_download.py {{ db.ftp.auth }} {{ directory.download_dumps }}"
+  register: dump_name
+
+- name: Drop {{ db.ftp.auth }} db
+  tags:
+    - create
+    - update
+  command: "docker exec -it {{ docker.auth_db }} dropdb {{ db.auth }} -U {{ db.user.auth }} --force"
+
+- name: Extract {{ db.ftp.auth }} db
+  tags:
+    - create
+    - update
+  unarchive:
+    src: "{{ dump_name.stdout }}"
+    dest: "{{ db.path.auth.disk }}"
+    remote_src: yes
+
+- name: Import {{ db.ftp.auth }} db
+  tags:
+    - create
+    - update
+  command: "docker exec -it {{ docker.auth_db }} psql --dbname=template1 -U {{ db.user.auth }} -f {{ db.path.auth.container }}/{{ db.auth }}.dump"
+
+- name: Auth db injection
+  tags:
+    - create
+    - update
+  command: docker exec {{ docker.auth_db }} psql -U {{ db.user.auth }} -p 5432 -d {{ db.auth }} -c "update oauth_clients set redirect='http://{{ app.host }}:9999/oauth' where id='93140325-4534-419a-937c-558b17045d7e';"

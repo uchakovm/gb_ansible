@@ -1,0 +1,32 @@
+---
+- name: Create directory scripts
+  tags:
+    - create
+  file:
+    path: "{{ directory.scripts }}"
+    state: directory
+    mode: 777
+    recurse: yes
+
+- name: Create directory dump
+  tags:
+    - create
+  file:
+    path: "{{ directory.download_dumps }}"
+    state: directory
+    mode: 777
+    recurse: yes
+
+- name: Copy python script
+  tags:
+    - create
+    - update
+  template:
+    src: ftp_download.j2
+    dest: "{{ directory.scripts }}/ftp_download.py"
+
+- name: Import aos db
+  include_tasks: aos.yml
+
+- name: Import auth db
+  include_tasks: auth.yml

@@ -1,0 +1,9 @@
+---
+- name: app-create
+  hosts: local
+  become: yes
+  roles:
+    - { role: apt, tags: [apt] }
+    - { role: git, tags: [git] }
+    - { role: app, tags: [app] }
+    - { role: db, tags: [db] }
