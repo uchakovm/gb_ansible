@@ -1,0 +1,1 @@
+ansible-playbook -i inventory/hosts.ini roles/aos-local-pb.yml --extra-var inventory/group_vars/local/credential.yml --vault-password-file ~/.ansible_pass.txt -v &> ansible.log
