@@ -1,5 +1,4 @@
 ---
-
 - name: Docker.io install
   tags:
     - create
@@ -92,6 +91,14 @@
   template:
     src: "{{ template_path }}/env.app.j2"
     dest: "{{ directory.project }}/app-data/aos-application/env.production.json"
+
+- name: Change admin env
+  tags:
+    - create
+    - update
+  template:
+    src: "{{ template_path }}/env.admin.j2"
+    dest: "{{ directory.project }}/app-data/aos-application/env.admin.json"
 
 - name: Restart services
   tags:

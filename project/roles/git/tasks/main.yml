@@ -13,7 +13,7 @@
   file:
     path: "{{ directory.root }}"
     state: directory
-    mode: 777
+    mode: 0777
     recurse: yes
 
 - name: Clone git project

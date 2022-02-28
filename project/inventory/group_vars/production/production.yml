@@ -4,4 +4,4 @@ app:
   compose_file: "docker-compose.production.yml"
 
 #TODO заглушка
-template_path: local
+template_path: production

@@ -1,0 +1,6 @@
+---
+- readiness_check:
+  status_code: "200"
+
+- health_check:
+  status_code: "200"

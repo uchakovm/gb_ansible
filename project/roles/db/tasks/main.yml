@@ -5,7 +5,7 @@
   file:
     path: "{{ directory.scripts }}"
     state: directory
-    mode: 777
+    mode: 0777
     recurse: yes
 
 - name: Create directory dump
@@ -14,7 +14,7 @@
   file:
     path: "{{ directory.download_dumps }}"
     state: directory
-    mode: 777
+    mode: 0777
     recurse: yes
 
 - name: Copy python script
@@ -26,7 +26,13 @@
     dest: "{{ directory.scripts }}/ftp_download.py"
 
 - name: Import aos db
+  tags:
+    - create
+    - update
   include_tasks: aos.yml
 
 - name: Import auth db
+  tags:
+    - create
+    - update
   include_tasks: auth.yml
