@@ -1,0 +1,6 @@
+---
+app:
+  host: "staging.rzd-training.ru"
+  compose_file: "docker-compose.production.yml"
+
+template_path: staging

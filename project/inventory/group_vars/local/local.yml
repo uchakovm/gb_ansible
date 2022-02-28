@@ -1,0 +1,6 @@
+---
+app:
+  host: "192.168.253.135"
+  compose_file: "docker-compose.production.yml"
+
+template_path: local

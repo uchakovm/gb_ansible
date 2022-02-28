@@ -1,0 +1,36 @@
+---
+- name: Check DAL readiness
+  uri:
+    url: "{{ property_check.dal.readiness_check.url }}"
+    timeout: "{{ property_check.timeout }}"
+    status_code: "{{ property_check.dal.readiness_check.status_code }}"
+  register: response
+
+- name: Check DAL health
+  uri:
+    url: "{{ property_check.dal.health_check.url }}"
+    timeout: "{{ property_check.timeout }}"
+    status_code: "{{ property_check.dal.health_check.status_code }}"
+  register: response
+
+- name: DAL version
+  debug:
+    var: response.x_version
+
+- name: Check API readiness
+  uri:
+    url: "{{ property_check.api.readiness_check.url }}"
+    timeout: "{{ property_check.timeout }}"
+    status_code: "{{ property_check.api.readiness_check.status_code }}"
+  register: response
+
+- name: Check API health
+  uri:
+    url: "{{ property_check.api.health_check.url }}"
+    timeout: "{{ property_check.timeout }}"
+    status_code: "{{ property_check.api.health_check.status_code }}"
+  register: response
+
+- name: API version
+  debug:
+    var: response.x_version

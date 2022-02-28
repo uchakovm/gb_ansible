@@ -1,0 +1,17 @@
+---
+property_check:
+  timeout: 2
+  dal:
+    readiness_check:
+      url: "http://{{ app.host }}:8887/dal/v1/test/readiness_check"
+      status_code: 200
+    health_check:
+      url: http://{{ app.host }}:8887/dal/v1/test/health_check
+      status_code: 200
+  api:
+    readiness_check:
+      url: "http://{{ app.host }}:8888/api/v1/test/readiness_check"
+      status_code: 200
+    health_check:
+      url: http://{{ app.host }}:8888/api/v1/test/health_check
+      status_code: 200

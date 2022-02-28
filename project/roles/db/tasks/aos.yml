@@ -1,0 +1,28 @@
+---
+- name: Download ftp {{ db.ftp.aos }} db
+  tags:
+    - create
+    - update
+  command: "python3 {{ directory.scripts }}/ftp_download.py {{ db.ftp.aos }} {{ directory.download_dumps }}"
+  register: dump_name
+
+- name: Drop {{ db.ftp.aos }} db
+  tags:
+    - create
+    - update
+  command: "docker exec -it {{ docker.aos_db }} dropdb {{ db.aos }} -U {{ db.user.aos }} --force"
+
+- name: Extract {{ db.ftp.aos }} db
+  tags:
+    - create
+    - update
+  unarchive:
+    src: "{{ dump_name.stdout }}"
+    dest: "{{ db.path.aos.disk }}"
+    remote_src: yes
+
+- name: Import {{ db.ftp.aos }} db
+  tags:
+    - create
+    - update
+  command: "docker exec -it {{ docker.aos_db }} psql --dbname=template1 -U {{ db.user.aos }} -f {{ db.path.aos.container }}/{{ db.aos }}.dump"
